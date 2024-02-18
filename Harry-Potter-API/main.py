@@ -1,9 +1,8 @@
 import json
 import requests
-from configuration import book_colors, hogwarts_houses, id_sample
+from configuration import movies_colors, hogwarts_houses, id_sample
 
-
-book_colors = book_colors
+book_colors = movies_colors
 houses = hogwarts_houses
 id_sample = id_sample
 
@@ -38,6 +37,7 @@ def make_request(complement, research=''):
 
 def characters_testing():
     all_characters = make_request('all characters')
+
     for i in all_characters:
         for j in i:
             if j == 'id':
@@ -52,6 +52,7 @@ def characters_testing():
 def specific_character_testing(id_code):
     id_code = id_code
     specific = make_request('specific character', id_code)
+
     for i in specific:
         print(i)
         print(len(i))
@@ -59,18 +60,21 @@ def specific_character_testing(id_code):
 
 def staffs_testing():
     all_staffs = make_request("hogwarts staff")
+
     for i in all_staffs:
         print(i)
 
 
 def house_testing():
     house = make_request("house")
+
     for i in house:
         print(i)
 
 
 def spells_testing():
     spells = make_request('spells')
+
     for i in spells:
         print(i)
 
@@ -88,4 +92,64 @@ def all_species_testing():
         print(i)
 
 
-characters_testing()
+def date_of_birth_testing():
+    all_characters = make_request('all characters')
+
+    cont_unknown = 0
+    cont_know = 0
+
+    name = ''
+
+    for i in all_characters:
+        for j in i:
+            if j == 'name':
+                name = i[j]
+            elif j == 'dateOfBirth':
+
+                if i[j] is None:
+                    cont_unknown += 1
+                else:
+                    cont_know += 1
+                    print(name)
+                    print(f"{j}: {i[j]}")
+
+    print("\n----------------\n")
+    print(f'unknown: {cont_unknown}')
+    print(f'know: {cont_know}')
+
+
+def actors_testing():
+    all_characters = make_request('all characters')
+
+    cont_unknown = 0
+    cont_know = 0
+
+    name = ''
+    alternative = ''
+
+    for i in all_characters:
+        for j in i:
+            if j == 'name':
+                name = i[j]
+            elif j == 'alternate_actors':
+                if len(i[j]) != 0:
+                    alternative = i[j]
+                else:
+                    alternative = 'xx'
+
+            elif j == 'actor':
+
+                if i[j] == '':
+                    cont_unknown += 1
+                else:
+                    cont_know += 1
+                    print(name)
+                    print(f"{j}: {i[j]}")
+                    print(f"alternative:(( {alternative}))")
+
+    print("\n----------------\n")
+    print(f'unknown: {cont_unknown}')
+    print(f'know: {cont_know}')
+
+
+actors_testing()
