@@ -2,6 +2,7 @@ import json
 import requests
 from configuration import movies_colors, hogwarts_houses, id_sample
 
+
 book_colors = movies_colors
 houses = hogwarts_houses
 id_sample = id_sample
@@ -60,21 +61,18 @@ def specific_character_testing(id_code):
 
 def staffs_testing():
     all_staffs = make_request("hogwarts staff")
-
     for i in all_staffs:
         print(i)
 
 
 def house_testing():
     house = make_request("house")
-
     for i in house:
         print(i)
 
 
 def spells_testing():
     spells = make_request('spells')
-
     for i in spells:
         print(i)
 
@@ -82,22 +80,18 @@ def spells_testing():
 def all_species_testing():
     all_characters = make_request('all characters')
     species = set()
-
     for i in all_characters:
         for j in i:
             if j == 'species':
                 species.add(i[j])
-
     for i in species:
         print(i)
 
 
 def date_of_birth_testing():
     all_characters = make_request('all characters')
-
     cont_unknown = 0
     cont_know = 0
-
     name = ''
 
     for i in all_characters:
@@ -105,7 +99,6 @@ def date_of_birth_testing():
             if j == 'name':
                 name = i[j]
             elif j == 'dateOfBirth':
-
                 if i[j] is None:
                     cont_unknown += 1
                 else:
@@ -135,7 +128,7 @@ def actors_testing():
                 if len(i[j]) != 0:
                     alternative = i[j]
                 else:
-                    alternative = 'xx'
+                    alternative = 'None'
 
             elif j == 'actor':
 
@@ -145,11 +138,11 @@ def actors_testing():
                     cont_know += 1
                     print(name)
                     print(f"{j}: {i[j]}")
-                    print(f"alternative:(( {alternative}))")
+                    print(f"alternative actor:(( {alternative}))")
 
     print("\n----------------\n")
     print(f'unknown: {cont_unknown}')
     print(f'know: {cont_know}')
 
 
-actors_testing()
+characters_testing()
