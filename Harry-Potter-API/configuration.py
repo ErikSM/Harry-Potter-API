@@ -5,7 +5,8 @@ movies_colors = {"dark_pink": "#581447",
                  "green": "#254935",
                  "beige": "#645F53",
                  "grey": "#3A3E41",
-                 "yellow": "#786313"}
+                 "yellow": "#786313",
+                 "white": "white"}
 
 hogwarts_houses = ["gryffindor",
                    "ravenclaw",

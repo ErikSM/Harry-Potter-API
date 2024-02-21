@@ -36,7 +36,7 @@ def make_request(complement, research=''):
     return dict_required
 
 
-def characters_testing():
+def characters_testing(search=None):
     all_characters = make_request('all characters')
 
     for i in all_characters:
@@ -48,6 +48,16 @@ def characters_testing():
 
         print(len(all_characters))
         print(len(i))
+
+    if search is not None:
+        for i in all_characters:
+            for j in i:
+                if j == 'name':
+                    if i[j] == search:
+                        print('ok founded')
+                        print(f" ### {i[j]}: ({search}) ###")
+                    else:
+                        pass
 
 
 def specific_character_testing(id_code):
@@ -66,7 +76,7 @@ def staffs_testing():
 
 
 def house_testing():
-    house = make_request("house")
+    house = make_request("houses")
     for i in house:
         print(i)
 
@@ -118,7 +128,7 @@ def actors_testing():
     cont_know = 0
 
     name = ''
-    alternative = ''
+    alternative = 'None'
 
     for i in all_characters:
         for j in i:
@@ -127,11 +137,8 @@ def actors_testing():
             elif j == 'alternate_actors':
                 if len(i[j]) != 0:
                     alternative = i[j]
-                else:
-                    alternative = 'None'
 
             elif j == 'actor':
-
                 if i[j] == '':
                     cont_unknown += 1
                 else:
@@ -145,4 +152,5 @@ def actors_testing():
     print(f'know: {cont_know}')
 
 
-characters_testing()
+
+
