@@ -8,6 +8,39 @@ movies_colors = {"dark_pink": "#581447",
                  "yellow": "#786313",
                  "white": "white"}
 
+all_request_list = ["all characters",
+                    "specific character",
+                    "hogwarts students",
+                    "hogwarts staff",
+                    "houses",
+                    "spells"]
+
+characters_dict_keys = ["patronus",
+                        "yearOfBirth",
+                        "hogwartsStaff",
+                        "alternate_actors",
+                        "wand",
+                        "name",
+                        "hogwartsStudent",
+                        "alternate_names",
+                        "hairColour",
+                        "gender",
+                        "alive",
+                        "image",
+                        "dateOfBirth",
+                        "species",
+                        "house",
+                        "actor",
+                        "ancestry",
+                        "wizard",
+                        "id",
+                        "eyeColour"]
+
+booleans_keys = ["hogwartsStaff",
+                 "alive",
+                 "wizard",
+                 "hogwartsStudent"]
+
 hogwarts_houses = ["gryffindor",
                    "ravenclaw",
                    "hufflepuff",
@@ -31,6 +64,11 @@ all_species = ["three-headed dog",
                "half-human",
                "werewolf"]
 
-commands_to_equest_list = ["all characters", "specific character",
-                           "hogwarts students", "hogwarts staff",
-                           "houses", "spells"]
+all_ancestry_type = ["muggle",
+                     "squib",
+                     "half-blood",
+                     "quarter-veela",
+                     "None",
+                     "muggleborn",
+                     "pure-blood",
+                     "half-veela"]

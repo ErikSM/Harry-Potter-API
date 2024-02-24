@@ -2,7 +2,6 @@ import json
 import requests
 from configuration import movies_colors, hogwarts_houses, id_sample
 
-
 book_colors = movies_colors
 houses = hogwarts_houses
 id_sample = id_sample
@@ -21,14 +20,13 @@ def make_request(complement, research=''):
     elif complement == "hogwarts staff":
         text = "characters/staff"
     elif complement == 'houses':
-        text = f"characters/house/{complement}"
+        text = f"characters/house/{research}"
     elif complement == 'spells':
         text = 'spells'
 
     try:
         request = requests.get(f"{address}{text}")
         dict_required = json.loads(request.text)
-
     except Exception as ex:
         dict_required = {'docs': [{'name': 'Error on request', '_id': f'{ex}'}], 'total': 'xx',
                          'limit': 'xx', 'offset': 'xx', 'page': 'xx', 'pages': 'xx'}
@@ -69,27 +67,45 @@ def specific_character_testing(id_code):
         print(len(i))
 
 
+def students_testing():
+    students = make_request('hogwarts students')
+
+    for i in students:
+        print(i)
+    print(len(students))
+
+
 def staffs_testing():
     all_staffs = make_request("hogwarts staff")
+
     for i in all_staffs:
         print(i)
+    print(len(all_staffs))
 
 
-def house_testing():
-    house = make_request("houses")
-    for i in house:
-        print(i)
+def houses_testing():
+    all_houses = dict()
+    for i in hogwarts_houses:
+        all_houses[i] = make_request("houses", i)
+
+    for i in all_houses:
+        print(f"-{i}: ({len(all_houses[i])} students)")
 
 
 def spells_testing():
     spells = make_request('spells')
+
     for i in spells:
         print(i)
+
+
+#  -----------------------------------------------------------
 
 
 def all_species_testing():
     all_characters = make_request('all characters')
     species = set()
+
     for i in all_characters:
         for j in i:
             if j == 'species':
@@ -100,6 +116,7 @@ def all_species_testing():
 
 def date_of_birth_testing():
     all_characters = make_request('all characters')
+
     cont_unknown = 0
     cont_know = 0
     name = ''
@@ -121,6 +138,22 @@ def date_of_birth_testing():
     print(f'know: {cont_know}')
 
 
+def ancestry_testing():
+    all_characters = make_request('all characters')
+    ancestry = set()
+
+    for i in all_characters:
+        for j in i:
+            if j == 'ancestry':
+                if i[j] == '':
+                    ancestry.add('None')
+                else:
+                    ancestry.add(i[j])
+
+    for i in ancestry:
+        print(i)
+
+
 def actors_testing():
     all_characters = make_request('all characters')
 
@@ -131,18 +164,23 @@ def actors_testing():
     alternative = 'None'
 
     for i in all_characters:
+
         for j in i:
             if j == 'name':
                 name = i[j]
+
             elif j == 'alternate_actors':
                 if len(i[j]) != 0:
                     alternative = i[j]
+                else:
+                    alternative = 'xxx'
 
             elif j == 'actor':
                 if i[j] == '':
                     cont_unknown += 1
                 else:
                     cont_know += 1
+
                     print(name)
                     print(f"{j}: {i[j]}")
                     print(f"alternative actor:(( {alternative}))")
@@ -152,5 +190,46 @@ def actors_testing():
     print(f'know: {cont_know}')
 
 
+#  --------------------------------------------
 
+
+def all_characters_keys_testing():
+    all_characters = make_request('all characters')
+    all_keys = set()
+
+    for i in all_characters:
+        for j in i:
+            all_keys.add(j)
+
+    for i in all_keys:
+        print(i)
+
+
+def bolleans_keys_testing():
+    all_characters = make_request('all characters')
+
+    bolleans_keys = set()
+    for i in all_characters:
+        for j in i:
+            if i[j] == bool():
+                bolleans_keys.add(j)
+
+    for i in bolleans_keys:
+        print(i)
+    print(f"total: {len(bolleans_keys)}")
+
+
+def image_testing():
+    all_characters = make_request('all characters')
+
+    images = list()
+    for i in all_characters:
+        for j in i:
+            if j == 'image':
+                images.append(i[j])
+
+    print(len(images))
+
+
+image_testing()
 
