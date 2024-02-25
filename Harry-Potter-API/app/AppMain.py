@@ -1,11 +1,14 @@
 from tkinter import *
-from configuration import movies_colors, hogwarts_houses, all_species, all_ancestry_type
-from main import make_request
+
+from api_config.access import make_request, create_generator
+from api_config.configuration import movies_colors, functions_list
+from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species, all_characters, all_magic_spells
 
 
 class AppMain:
 
     def __init__(self):
+
         self.window = Tk()
         self.window.title('HP - API')
         self.window.geometry("+300+200")
@@ -42,7 +45,7 @@ class AppMain:
         self.field_search.config(bg=colors_title[1], highlightbackground=colors_title[2])
         self.field_search.pack(side=LEFT)
 
-        Button(sub_frame_top, text='search', command=self.print_search, bg=colors_title[0]).pack(side=LEFT)
+        Button(sub_frame_top, text='search', command=self.do_search, bg=colors_title[0]).pack(side=LEFT)
         Label(sub_frame_top, text='API - HP', font=('Arial', 12), width=13, background=colors_title[2]).pack(side=LEFT)
 
         self.frame_left = Frame(self.window, bg=color_frames, bd=10)
@@ -57,12 +60,12 @@ class AppMain:
 
         color_boxes = (movies_colors['green'], movies_colors['white'])
 
-        self.menu_hogwarts_list = ['Students', 'Staffs', 'houses']
+        self.menu_hogwarts_list = functions_list
 
-        question_menu_2 = Spinbox(frame_option, values=self.menu_hogwarts_list)
-        question_menu_2.config(width=35, bg=color_boxes[1], bd=8)
-        question_menu_2.config(highlightbackground=color_boxes[0])
-        question_menu_2.pack()
+        self.spinbox = Spinbox(frame_option, values=self.menu_hogwarts_list)
+        self.spinbox.config(width=35, bg=color_boxes[1], bd=8)
+        self.spinbox.config(highlightbackground=color_boxes[0])
+        self.spinbox.pack()
 
         self.listbox = Listbox(frame_list, width=30, height=20, highlightbackground=color_boxes[1])
         self.listbox.config(bg=color_boxes[0], bd=20)
@@ -73,13 +76,9 @@ class AppMain:
 
         color_buttons = movies_colors['grey']
 
-        butom_1 = Button(frame_button, text="test_house", command=None)
+        butom_1 = Button(frame_button, text="test_house", command=self.open_information)
         butom_1.config(bg=color_buttons, bd=1)
         butom_1.pack(side="left")
-
-        butom_2 = Button(frame_button, text='test_species', command=None)
-        butom_2.config(bg=color_buttons, bd=1)
-        butom_2.pack(side="left")
 
         self.frame_right = Frame(self.window, bg=color_frames, bd=10)
         self.frame_right.pack(side=RIGHT)
@@ -89,22 +88,31 @@ class AppMain:
 
         self.window.mainloop()
 
-    def print_houses(self):
-        pass
+    def open_information(self):
+        self.listbox.delete(0, END)
 
-    def print_species(self):
-        pass
+        captured = self.spinbox.get()
+        self.listbox.insert(END, captured)
 
-    def print_search(self):
+    def do_search(self):
+
+        improve_research_enabled = None
+
         captured = self.field_search.get()
 
         improve = self.option_menu_name.get()
         if improve in self.menu_improve_list:
             improve_research_enabled = True
-        else:
+        elif improve == "Improve search":
             improve_research_enabled = False
 
         self.listbox.delete(0, END)
+
+        characters = create_generator(make_request('all characters'))
+        all_spells = create_generator(make_request('spells'))
+        all_houses = hogwarts_houses
+        species = all_species
+        ancestries = all_ancestry_type
 
         character_name = ''
         actor_name = ''
@@ -115,12 +123,6 @@ class AppMain:
 
         type_found = "Not founded"
         to_print = "Not founded"
-
-        characters = make_request('all characters')
-        all_spells = make_request('spells')
-        all_houses = hogwarts_houses
-        species = all_species
-        ancestries = all_ancestry_type
 
         founded = False
 
