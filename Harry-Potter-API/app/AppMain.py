@@ -32,7 +32,7 @@ class AppMain:
 
         colors_title = (movies_colors['grey'], movies_colors['white'], movies_colors['yellow'])
 
-        self.menu_improve_list = ["character", "actor", "house", "spell", "specie", "ancestry"]
+        self.menu_improve_list = ["character", "actor", "house", "spell", "species", "ancestry"]
 
         self.option_menu_name = StringVar(self.window)
         self.option_menu_name.set("Improve search")
@@ -51,18 +51,18 @@ class AppMain:
         self.frame_left = Frame(self.window, bg=color_frames, bd=10)
         self.frame_left.pack(side=LEFT)
 
-        frame_option = Frame(self.frame_left, bg=color_sub_frames, bd=1)
-        frame_option.pack()
+        frame_spinbox = Frame(self.frame_left, bg=color_sub_frames, bd=1)
+        frame_spinbox.pack()
         frame_list = Frame(self.frame_left, bg=color_sub_frames, bd=1)
         frame_list.pack()
         frame_button = Frame(self.frame_left, bg=color_sub_frames, bd=1)
         frame_button.pack()
 
-        color_boxes = (movies_colors['green'], movies_colors['white'])
+        color_boxes = [movies_colors['green'], movies_colors['white']]
 
-        self.menu_hogwarts_list = functions_list
+        self.menu_hogwarts_list = ['Characters', 'Hogwarts', 'Spells', 'Curiosities']
 
-        self.spinbox = Spinbox(frame_option, values=self.menu_hogwarts_list)
+        self.spinbox = Spinbox(frame_spinbox, values=self.menu_hogwarts_list)
         self.spinbox.config(width=35, bg=color_boxes[1], bd=8)
         self.spinbox.config(highlightbackground=color_boxes[0])
         self.spinbox.pack()
@@ -76,9 +76,9 @@ class AppMain:
 
         color_buttons = movies_colors['grey']
 
-        butom_1 = Button(frame_button, text="test_house", command=self.open_information)
-        butom_1.config(bg=color_buttons, bd=1)
-        butom_1.pack(side="left")
+        button_1 = Button(frame_button, text="test_house", command=self.open_information)
+        button_1.config(bg=color_buttons, bd=1)
+        button_1.pack(side="left")
 
         self.frame_right = Frame(self.window, bg=color_frames, bd=10)
         self.frame_right.pack(side=RIGHT)
@@ -92,10 +92,28 @@ class AppMain:
         self.listbox.delete(0, END)
 
         captured = self.spinbox.get()
+        options_list = list()
+
+        for i in functions_list:
+            value = i[1]
+            option = i[0]
+
+            if captured == 'Characters':
+                if value == 1:
+                    options_list.append(option)
+            elif captured == 'Hogwarts':
+                if value == 1:
+                    options_list.append(option)
+            elif captured == 'Spells':
+                if value == 1:
+                    options_list.append(option)
+            elif captured == 'Curiosities':
+                if value == 1:
+                    options_list.append(option)
+
         self.listbox.insert(END, captured)
 
     def do_search(self):
-
         improve_research_enabled = None
 
         captured = self.field_search.get()

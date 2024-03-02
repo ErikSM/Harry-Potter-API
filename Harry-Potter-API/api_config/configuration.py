@@ -16,15 +16,15 @@ all_request_list = ["all characters",
                     "houses",
                     "spells"]
 
-functions_list = ["characters",
-                  "specific_character",
-                  "hogwarts_students",
-                  "hogwarts_staffs",
-                  "spells",
-                  "species",
-                  "date_of_birth",
-                  "ancestry",
-                  "actors"]
+functions_list = [("characters", 1),
+                  ("specific_character", 1),
+                  ("hogwarts_students", 2),
+                  ("hogwarts_staffs", 2),
+                  ("spells", 3),
+                  ("species", 4),
+                  ("date_of_birth", 4),
+                  ("ancestry", 4),
+                  ("actors", 4)]
 
 characters_dict_keys = ["patronus",
                         "yearOfBirth",

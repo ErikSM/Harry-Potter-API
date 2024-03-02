@@ -3,6 +3,7 @@ import requests
 from api_config.configuration import movies_colors, id_sample
 from api_config.data_api import hogwarts_houses_students
 
+
 book_colors = movies_colors
 id_sample = id_sample
 
@@ -27,6 +28,7 @@ def request_testing(complement, research=''):
     try:
         request = requests.get(f"{address}{text}")
         dict_required = json.loads(request.text)
+
     except Exception as ex:
         dict_required = {'docs': [{'name': 'Error on request', '_id': f'{ex}'}], 'total': 'xx',
                          'limit': 'xx', 'offset': 'xx', 'page': 'xx', 'pages': 'xx'}
@@ -231,7 +233,4 @@ def image_testing():
                 images.append(i[j])
 
     print(len(images))
-
-
-students_testing()
 
