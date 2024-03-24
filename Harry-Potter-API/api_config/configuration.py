@@ -9,22 +9,26 @@ movies_colors = {"dark_pink": "#581447",
                  "yellow": "#786313",
                  "white": "white"}
 
+
 all_request_list = ["all characters",
                     "specific character",
                     "hogwarts students",
                     "hogwarts staff",
-                    "houses",
+                    "hogwarts houses",
                     "spells"]
 
-functions_list = [("characters", 1),
-                  ("specific_character", 1),
-                  ("hogwarts_students", 2),
-                  ("hogwarts_staffs", 2),
-                  ("spells", 3),
-                  ("species", 4),
-                  ("date_of_birth", 4),
-                  ("ancestry", 4),
-                  ("actors", 4)]
+
+functions_list = [("Characters", 1),
+                  ("Specific Character", 1),
+                  ("Students", 2),
+                  ("Staffs", 2),
+                  ("Houses", 2),
+                  ("Spells", 3),
+                  ("Species", 4),
+                  ("Date of Birth", 4),
+                  ("Ancestry", 4),
+                  ("Actors", 4)]
+
 
 characters_dict_keys = ["patronus",
                         "yearOfBirth",
@@ -47,9 +51,9 @@ characters_dict_keys = ["patronus",
                         "id",
                         "eyeColour"]
 
+
 booleans_keys = ["hogwartsStaff",
                  "alive",
                  "wizard",
                  "hogwartsStudent"]
-
 

@@ -3,7 +3,6 @@ import requests
 from api_config.configuration import movies_colors, id_sample
 from api_config.data_api import hogwarts_houses_students
 
-
 book_colors = movies_colors
 id_sample = id_sample
 
@@ -67,7 +66,9 @@ def specific_character_testing(id_code):
     specific = request_testing('specific character', id_code)
 
     for i in specific:
-        print(i)
+        for j in i:
+            print(f"{j}: {i[j]}")
+
         print(len(i))
 
 
@@ -209,18 +210,18 @@ def all_characters_keys_testing():
         print(i)
 
 
-def bolleans_keys_testing():
+def boolean_keys_testing():
     all_characters = request_testing('all characters')
 
-    bolleans_keys = set()
+    boolean_keys = set()
     for i in all_characters:
         for j in i:
             if i[j] == bool():
-                bolleans_keys.add(j)
+                boolean_keys.add(j)
 
-    for i in bolleans_keys:
+    for i in boolean_keys:
         print(i)
-    print(f"total: {len(bolleans_keys)}")
+    print(f"total: {len(boolean_keys)}")
 
 
 def image_testing():
@@ -230,7 +231,15 @@ def image_testing():
     for i in all_characters:
         for j in i:
             if j == 'image':
-                images.append(i[j])
+                if i[j] == '':
+                    pass
+                else:
+                    images.append(i[j])
 
     print(len(images))
+    for i in images:
+        print(i)
+
+
+staffs_testing()
 

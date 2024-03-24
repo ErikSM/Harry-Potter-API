@@ -17,4 +17,3 @@ all_hogwarts_staffs = create_generator(make_request('hogwarts staffs'))
 hogwarts_houses_students = dict()
 for i in hogwarts_houses:
     hogwarts_houses_students[i] = create_generator(make_request('houses', i))
-

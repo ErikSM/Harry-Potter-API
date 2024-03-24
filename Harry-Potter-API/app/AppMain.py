@@ -2,32 +2,31 @@ from tkinter import *
 
 from api_config.access import make_request, create_generator
 from api_config.configuration import movies_colors, functions_list
-from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species, all_characters, all_magic_spells
+from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species
 
 
 class AppMain:
 
     def __init__(self):
-
         self.window = Tk()
         self.window.title('HP - API')
         self.window.geometry("+300+200")
         self.window.resizable(False, False)
-        self.window.config(bg=movies_colors['yellow'], bd=3)
+        self.window.config(bg=movies_colors['pink'], bd=3)
 
         color_entry = movies_colors['grey']
 
         self.entry = Entry(self.window, width=42, disabledbackground=color_entry)
-        self.entry.config(bg=movies_colors['grey'], bd=4, state=DISABLED)
+        self.entry.config(bg=color_entry, bd=4, state=DISABLED)
         self.entry.pack()
 
         color_frames = "black"
-        color_sub_frames = movies_colors['yellow']
+        color_sub_frames = [movies_colors['yellow'], movies_colors['pink'], movies_colors['beige']]
 
         self.frame_top = Frame(self.window, bg=color_frames, bd=10)
         self.frame_top.pack(side=TOP)
 
-        sub_frame_top = Frame(self.frame_top, bg=color_sub_frames, bd=1)
+        sub_frame_top = Frame(self.frame_top, bg=color_sub_frames[0], bd=1)
         sub_frame_top.pack(fill=Y)
 
         colors_title = (movies_colors['grey'], movies_colors['white'], movies_colors['yellow'])
@@ -51,24 +50,52 @@ class AppMain:
         self.frame_left = Frame(self.window, bg=color_frames, bd=10)
         self.frame_left.pack(side=LEFT)
 
-        frame_spinbox = Frame(self.frame_left, bg=color_sub_frames, bd=1)
+        frame_spinbox = Frame(self.frame_left, bg=color_sub_frames[2], bd=7)
         frame_spinbox.pack()
-        frame_list = Frame(self.frame_left, bg=color_sub_frames, bd=1)
+        frame_prev_nex = Frame(self.frame_left, bg=color_sub_frames[1], bd=0)
+        frame_prev_nex.pack()
+        frame_list = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
         frame_list.pack()
-        frame_button = Frame(self.frame_left, bg=color_sub_frames, bd=1)
+        frame_button = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
         frame_button.pack()
 
-        color_boxes = [movies_colors['green'], movies_colors['white']]
+        boxes_left_colors = [movies_colors['grey'], movies_colors['white'], movies_colors['pink']]
 
         self.menu_hogwarts_list = ['Characters', 'Hogwarts', 'Spells', 'Curiosities']
 
         self.spinbox = Spinbox(frame_spinbox, values=self.menu_hogwarts_list)
-        self.spinbox.config(width=35, bg=color_boxes[1], bd=8)
-        self.spinbox.config(highlightbackground=color_boxes[0])
-        self.spinbox.pack()
+        self.spinbox.config(width=29, bg=boxes_left_colors[0], bd=7)
+        self.spinbox.config(highlightbackground=boxes_left_colors[1])
+        self.spinbox.pack(side=LEFT)
 
-        self.listbox = Listbox(frame_list, width=30, height=20, highlightbackground=color_boxes[1])
-        self.listbox.config(bg=color_boxes[0], bd=20)
+        self.string_play = StringVar(self.window)
+        self.string_play.set('>')
+
+        play = Button(frame_spinbox, font=('consolas', 13, 'bold'), textvariable=self.string_play, command=self.play)
+        play.config(width=2, height=1, bd=1, bg=boxes_left_colors[0], highlightbackground=boxes_left_colors[1])
+        play.pack(side=LEFT)
+
+        self.string_previous = StringVar(self.window)
+        self.string_previous.set(' [-] ')
+        self.string_select = StringVar(self.window)
+        self.string_select.set(' | [select] > ')
+        self.string_next = StringVar(self.window)
+        self.string_next.set(' [-] ')
+
+        standard_size = 10
+
+        previous = Button(frame_prev_nex, textvariable=self.string_previous, command=self.previous)
+        previous.config(width=(standard_size - 4), bd=2, fg=boxes_left_colors[2])
+        previous.pack(side=LEFT)
+        select = Button(frame_prev_nex, textvariable=self.string_select, command=self.select)
+        select.config(width=(standard_size + 8), bd=3, fg=boxes_left_colors[2])
+        select.pack(side=LEFT)
+        go_next = Button(frame_prev_nex, textvariable=self.string_next, command=self.next)
+        go_next.config(width=(standard_size - 4), bd=2, fg=boxes_left_colors[2])
+        go_next.pack(side=LEFT)
+
+        self.listbox = Listbox(frame_list, width=30, height=20, highlightbackground=boxes_left_colors[1])
+        self.listbox.config(bg=boxes_left_colors[0], bd=20)
         y_list_left = Scrollbar(frame_list, orient=VERTICAL, command=self.listbox.yview)
         y_list_left.grid(row=1, column=0, sticky=N + S)
         self.listbox.grid(row=1, column=1)
@@ -76,7 +103,7 @@ class AppMain:
 
         color_buttons = movies_colors['grey']
 
-        button_1 = Button(frame_button, text="test_house", command=self.open_information)
+        button_1 = Button(frame_button, text="test_house")
         button_1.config(bg=color_buttons, bd=1)
         button_1.pack(side="left")
 
@@ -88,7 +115,33 @@ class AppMain:
 
         self.window.mainloop()
 
-    def open_information(self):
+    def select(self):
+        pass
+
+    def next(self):
+        try:
+            index = self.listbox.curselection()[0] + 1
+            self.listbox.select_clear(0, END)
+            self.listbox.activate(index)
+            self.listbox.select_set(index)
+            self.listbox.yview(index)
+        except Exception as ex:
+            self.listbox.select_set(0)
+            print(f"No next\n\n{ex}")
+
+    def previous(self):
+        try:
+            index = self.listbox.curselection()[0] - 1
+            self.listbox.select_clear(0, END)
+            self.listbox.activate(index)
+            self.listbox.select_set(index)
+            self.listbox.yview(index)
+            print(index)
+        except Exception as ex:
+            self.listbox.select_set(END)
+            print(f"No previous\n\nError{ex}")
+
+    def play(self):
         self.listbox.delete(0, END)
 
         captured = self.spinbox.get()
@@ -102,23 +155,29 @@ class AppMain:
                 if value == 1:
                     options_list.append(option)
             elif captured == 'Hogwarts':
-                if value == 1:
+                if value == 2:
                     options_list.append(option)
             elif captured == 'Spells':
-                if value == 1:
+                if value == 3:
                     options_list.append(option)
             elif captured == 'Curiosities':
-                if value == 1:
+                if value == 4:
                     options_list.append(option)
 
-        self.listbox.insert(END, captured)
+        for i in options_list:
+            self.listbox.insert(END, i)
+
+        self.listbox.select_set(0)
+
+        self.string_previous.set('<<<')
+        self.string_next.set('>>>')
 
     def do_search(self):
         improve_research_enabled = None
 
         captured = self.field_search.get()
-
         improve = self.option_menu_name.get()
+
         if improve in self.menu_improve_list:
             improve_research_enabled = True
         elif improve == "Improve search":
