@@ -1,13 +1,17 @@
 from tkinter import *
 
-from api_config.access import make_request, create_generator
 from api_config.configuration import movies_colors, functions_list
-from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species
+from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species, all_spells, all_characters, \
+    hogwarts_details
 
 
 class AppMain:
 
     def __init__(self):
+
+        self.hogwarts_details_got = False
+        self.hogwarts_tuple = None
+
         self.window = Tk()
         self.window.title('HP - API')
         self.window.geometry("+300+200")
@@ -35,7 +39,8 @@ class AppMain:
 
         self.option_menu_name = StringVar(self.window)
         self.option_menu_name.set("Improve search")
-        improve_menu = OptionMenu(sub_frame_top, self.option_menu_name, *self.menu_improve_list)
+        improve_menu = OptionMenu(sub_frame_top, self.option_menu_name, *self.menu_improve_list,
+                                  self.option_menu_name.get())
         improve_menu.config(width=32, bg=colors_title[0], activebackground=colors_title[1])
         improve_menu.config(highlightbackground=colors_title[2])
         improve_menu.pack()
@@ -45,36 +50,29 @@ class AppMain:
         self.field_search.pack(side=LEFT)
 
         Button(sub_frame_top, text='search', command=self.do_search, bg=colors_title[0]).pack(side=LEFT)
-        Label(sub_frame_top, text='API - HP', font=('Arial', 12), width=13, background=colors_title[2]).pack(side=LEFT)
+        Label(sub_frame_top, text='API - HP', font=('Arial', 10, 'bold'), width=13, background=colors_title[2]).pack(
+            side=LEFT)
 
         self.frame_left = Frame(self.window, bg=color_frames, bd=10)
-        self.frame_left.pack(side=LEFT)
-
-        frame_spinbox = Frame(self.frame_left, bg=color_sub_frames[2], bd=7)
-        frame_spinbox.pack()
-        frame_prev_nex = Frame(self.frame_left, bg=color_sub_frames[1], bd=0)
-        frame_prev_nex.pack()
-        frame_list = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
-        frame_list.pack()
-        frame_button = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
-        frame_button.pack()
 
         boxes_left_colors = [movies_colors['grey'], movies_colors['white'], movies_colors['pink']]
 
-        self.menu_hogwarts_list = ['Characters', 'Hogwarts', 'Spells', 'Curiosities']
+        self.menu_play_list = ['Characters', 'Hogwarts', 'Spells', 'Curiosities']
 
-        self.spinbox = Spinbox(frame_spinbox, values=self.menu_hogwarts_list)
+        frame_spinbox = Frame(self.frame_left, bg=color_sub_frames[2], bd=7)
+        self.spinbox = Spinbox(frame_spinbox, values=self.menu_play_list)
         self.spinbox.config(width=29, bg=boxes_left_colors[0], bd=7)
         self.spinbox.config(highlightbackground=boxes_left_colors[1])
         self.spinbox.pack(side=LEFT)
 
         self.string_play = StringVar(self.window)
         self.string_play.set('>')
-
         play = Button(frame_spinbox, font=('consolas', 13, 'bold'), textvariable=self.string_play, command=self.play)
         play.config(width=2, height=1, bd=1, bg=boxes_left_colors[0], highlightbackground=boxes_left_colors[1])
         play.pack(side=LEFT)
+        frame_spinbox.pack()
 
+        frame_prev_nex = Frame(self.frame_left, bg=color_sub_frames[1], bd=0)
         self.string_previous = StringVar(self.window)
         self.string_previous.set(' [-] ')
         self.string_select = StringVar(self.window)
@@ -93,43 +91,92 @@ class AppMain:
         go_next = Button(frame_prev_nex, textvariable=self.string_next, command=self.next)
         go_next.config(width=(standard_size - 4), bd=2, fg=boxes_left_colors[2])
         go_next.pack(side=LEFT)
+        frame_prev_nex.pack()
 
+        frame_list = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
         self.listbox = Listbox(frame_list, width=30, height=20, highlightbackground=boxes_left_colors[1])
         self.listbox.config(bg=boxes_left_colors[0], bd=20)
         y_list_left = Scrollbar(frame_list, orient=VERTICAL, command=self.listbox.yview)
         y_list_left.grid(row=1, column=0, sticky=N + S)
         self.listbox.grid(row=1, column=1)
         self.listbox.config(yscrollcommand=y_list_left.set)
+        frame_list.pack()
 
         color_buttons = movies_colors['grey']
 
+        frame_button = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
         button_1 = Button(frame_button, text="test_house")
         button_1.config(bg=color_buttons, bd=1)
         button_1.pack(side="left")
+        frame_button.pack()
+
+        self.frame_left.pack(side=LEFT)
 
         self.frame_right = Frame(self.window, bg=color_frames, bd=10)
         self.frame_right.pack(side=RIGHT)
 
-        self.frame_foot = Frame(self.window, bg=color_frames, bd=10)
-        self.frame_foot.pack(side=BOTTOM)
-
         self.window.mainloop()
 
+    #  ------------   in progress   -----------------
     def select(self):
-        pass
+        selected = self.listbox.get(ANCHOR)
+        menu = None
+
+        self.listbox.delete(0, END)
+
+        if selected == '':
+            print('No item')
+
+        else:
+
+            for i in functions_list:
+                if selected == i[0]:
+                    menu = i[1]
+
+        if not self.hogwarts_details_got:
+            if menu == 2:
+                self.hogwarts_details_got = True
+
+        if self.hogwarts_details_got:
+            self.hogwarts_tuple = hogwarts_details()
+
+        if selected == 'Characters':
+            for i in all_characters:
+                self.listbox.insert(END, i.name)
+        elif selected == "Specific Character":
+            print('not yet')
+        elif selected == 'Students':
+            for i in self.hogwarts_tuple[0]:
+                self.listbox.insert(END, i['name'])
+        elif selected == 'Staffs':
+            for i in self.hogwarts_tuple[1]:
+                self.listbox.insert(END, i['name'])
+        elif selected == 'Houses':
+            for i in self.hogwarts_tuple[2]:
+                self.listbox.insert(END, i['name'])
+        elif selected == 'Spells':
+            for i in all_spells:
+                self.listbox.insert(END, i['name'])
+        else:
+            print('not yet')
+
+    #  --------------------------------------------------
 
     def next(self):
+
         try:
             index = self.listbox.curselection()[0] + 1
             self.listbox.select_clear(0, END)
             self.listbox.activate(index)
             self.listbox.select_set(index)
             self.listbox.yview(index)
+
         except Exception as ex:
             self.listbox.select_set(0)
             print(f"No next\n\n{ex}")
 
     def previous(self):
+
         try:
             index = self.listbox.curselection()[0] - 1
             self.listbox.select_clear(0, END)
@@ -137,6 +184,7 @@ class AppMain:
             self.listbox.select_set(index)
             self.listbox.yview(index)
             print(index)
+
         except Exception as ex:
             self.listbox.select_set(END)
             print(f"No previous\n\nError{ex}")
@@ -175,7 +223,7 @@ class AppMain:
     def do_search(self):
         improve_research_enabled = None
 
-        captured = self.field_search.get()
+        word_captured = self.field_search.get()
         improve = self.option_menu_name.get()
 
         if improve in self.menu_improve_list:
@@ -185,9 +233,9 @@ class AppMain:
 
         self.listbox.delete(0, END)
 
-        characters = create_generator(make_request('all characters'))
-        all_spells = create_generator(make_request('spells'))
-        all_houses = hogwarts_houses
+        characters = all_characters
+        spells = all_spells
+        houses = hogwarts_houses
         species = all_species
         ancestries = all_ancestry_type
 
@@ -212,33 +260,30 @@ class AppMain:
 
         if not improve_research_enabled or improve == 'character':
             for i in characters:
-                for j in i:
-                    if j == 'name':
-                        if i[j] == captured:
-                            founded = True
-                            a_character = True
-                            character_name = i[j]
-                            type_found = "character"
-                    elif j == 'actor':
-                        if i[j] == captured:
-                            founded = True
-                            a_actor = True
-                            actor_name = i[j]
-                            type_found = "actor"
+                if i.name.title() == word_captured.title():
+                    founded = True
+                    a_character = True
+                    character_name = i.name
+                    type_found = "character"
+                if i.actor == word_captured:
+                    founded = True
+                    a_actor = True
+                    actor_name = i.actor
+                    type_found = "actor"
 
         if not improve_research_enabled or improve == 'house':
-            for i in all_houses:
-                if i == captured:
+            for i in houses:
+                if i.title() == word_captured.title():
                     founded = True
                     a_house = True
                     house_name = i
                     type_found = "house"
 
         if not improve_research_enabled or improve == 'spell':
-            for i in all_spells:
+            for i in spells:
                 for j in i:
                     if j == 'name':
-                        if i[j] == captured:
+                        if i[j].title() == word_captured.title():
                             founded = True
                             a_spell = True
                             spell_name = i[j]
@@ -246,7 +291,7 @@ class AppMain:
 
         if not improve_research_enabled or improve == 'specie':
             for i in species:
-                if i == captured:
+                if i.title() == word_captured.title():
                     founded = True
                     a_specie = True
                     specie_name = i
@@ -254,14 +299,14 @@ class AppMain:
 
         if not improve_research_enabled or improve == 'ancestry':
             for i in ancestries:
-                if i == captured:
+                if i.title() == word_captured.title():
                     founded = True
                     a_ancestry = True
                     ancestry_type = i
                     type_found = 'ancestry'
 
         if founded:
-            self.listbox.insert(END, f"was sought:({captured})")
+            self.listbox.insert(END, f"was sought:({word_captured})")
 
             if a_character:
                 to_print = character_name
