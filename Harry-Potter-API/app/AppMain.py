@@ -1,61 +1,63 @@
 from tkinter import *
 
 from api_config.configuration import movies_colors, functions_list
-from api_config.data_api import hogwarts_houses, all_ancestry_type, all_species, all_spells, all_characters, \
-    hogwarts_details
+from api_config.data_api import houses_names, all_ancestry_type, all_species, all_spells, all_characters, \
+    hogwarts_students, hogwarts_staffs, hogwarts_houses
 
 
 class AppMain:
 
     def __init__(self):
 
-        self.hogwarts_details_got = False
-        self.hogwarts_tuple = None
+        self.selected = None
 
         self.window = Tk()
         self.window.title('HP - API')
         self.window.geometry("+300+200")
         self.window.resizable(False, False)
-        self.window.config(bg=movies_colors['pink'], bd=3)
+        self.window.config(bg=movies_colors['black'], bd=3)
+
+        color_frames = movies_colors['black']
+
+        self.frame_top = Frame(self.window, bg=color_frames, bd=10)
 
         color_entry = movies_colors['grey']
 
-        self.entry = Entry(self.window, width=42, disabledbackground=color_entry)
+        frame_entry = Frame(self.window)
+        self.entry = Entry(frame_entry, width=82, disabledbackground=color_entry)
         self.entry.config(bg=color_entry, bd=4, state=DISABLED)
         self.entry.pack()
+        frame_entry.pack()
 
-        color_frames = "black"
-        color_sub_frames = [movies_colors['yellow'], movies_colors['pink'], movies_colors['beige']]
-
-        self.frame_top = Frame(self.window, bg=color_frames, bd=10)
         self.frame_top.pack(side=TOP)
 
-        sub_frame_top = Frame(self.frame_top, bg=color_sub_frames[0], bd=1)
-        sub_frame_top.pack(fill=Y)
+        self.frame_left = Frame(self.window, bg=color_frames, bd=10)
 
+        color_sub_frames = [movies_colors['yellow'], movies_colors['black'], movies_colors['beige']]
+
+        frame_search = Frame(self.frame_left, bg=color_sub_frames[0], bd=1)
         colors_title = (movies_colors['grey'], movies_colors['white'], movies_colors['yellow'])
 
         self.menu_improve_list = ["character", "actor", "house", "spell", "species", "ancestry"]
 
         self.option_menu_name = StringVar(self.window)
         self.option_menu_name.set("Improve search")
-        improve_menu = OptionMenu(sub_frame_top, self.option_menu_name, *self.menu_improve_list,
+        improve_menu = OptionMenu(frame_search, self.option_menu_name, *self.menu_improve_list,
                                   self.option_menu_name.get())
         improve_menu.config(width=32, bg=colors_title[0], activebackground=colors_title[1])
         improve_menu.config(highlightbackground=colors_title[2])
         improve_menu.pack()
 
-        self.field_search = Entry(sub_frame_top, width=10, disabledbackground=colors_title[0], bd=4, state=NORMAL)
+        self.field_search = Entry(frame_search, width=10, disabledbackground=colors_title[0], bd=4, state=NORMAL)
         self.field_search.config(bg=colors_title[1], highlightbackground=colors_title[2])
         self.field_search.pack(side=LEFT)
 
-        Button(sub_frame_top, text='search', command=self.do_search, bg=colors_title[0]).pack(side=LEFT)
-        Label(sub_frame_top, text='API - HP', font=('Arial', 10, 'bold'), width=13, background=colors_title[2]).pack(
+        Button(frame_search, text='search', command=self.do_search, bg=colors_title[0]).pack(side=LEFT)
+        Label(frame_search, text='API - HP', font=('Arial', 10, 'bold'), width=13, background=colors_title[2]).pack(
             side=LEFT)
+        frame_search.pack(fill=Y)
 
-        self.frame_left = Frame(self.window, bg=color_frames, bd=10)
-
-        boxes_left_colors = [movies_colors['grey'], movies_colors['white'], movies_colors['pink']]
+        boxes_left_colors = [movies_colors['grey'], movies_colors['white'], movies_colors['black']]
 
         self.menu_play_list = ['Characters', 'Hogwarts', 'Spells', 'Curiosities']
 
@@ -96,69 +98,103 @@ class AppMain:
         frame_list = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
         self.listbox = Listbox(frame_list, width=30, height=20, highlightbackground=boxes_left_colors[1])
         self.listbox.config(bg=boxes_left_colors[0], bd=20)
-        y_list_left = Scrollbar(frame_list, orient=VERTICAL, command=self.listbox.yview)
-        y_list_left.grid(row=1, column=0, sticky=N + S)
+        y_text_right = Scrollbar(frame_list, orient=VERTICAL, command=self.listbox.yview)
+        y_text_right.grid(row=1, column=0, sticky=N + S)
         self.listbox.grid(row=1, column=1)
-        self.listbox.config(yscrollcommand=y_list_left.set)
-        frame_list.pack()
+        self.listbox.config(yscrollcommand=y_text_right.set)
+        frame_list.pack(side=LEFT)
 
-        color_buttons = movies_colors['grey']
-
-        frame_button = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
-        button_1 = Button(frame_button, text="test_house")
-        button_1.config(bg=color_buttons, bd=1)
-        button_1.pack(side="left")
-        frame_button.pack()
+        frame_but = Frame(self.frame_left, bg=color_sub_frames[1], bd=1)
+        cont = 0
+        while cont < 14:
+            if cont == 1:
+                self.but_execute = Button(frame_but, text='show more', command=self.show_item, state=DISABLED)
+                self.but_execute.grid(row=cont, column=0)
+                cont += 1
+            else:
+                Button(frame_but, text=f'{" "*20}', bg=boxes_left_colors[0], state=DISABLED).grid(row=cont, column=0)
+                cont += 1
+        frame_but.pack(side=LEFT)
 
         self.frame_left.pack(side=LEFT)
 
         self.frame_right = Frame(self.window, bg=color_frames, bd=10)
+
+        frame_text = Frame(self.frame_right)
+        self.text = Text(frame_text, width=40, height=30, bg=boxes_left_colors[2], fg=boxes_left_colors[1], bd=20)
+        y_text_right = Scrollbar(frame_text, orient=VERTICAL, command=self.text.yview)
+        y_text_right.grid(row=1, column=1, sticky=N + S)
+        self.text.grid(row=1, column=0)
+        frame_text.pack()
+
         self.frame_right.pack(side=RIGHT)
 
         self.window.mainloop()
 
+    def show_item(self):
+
+        item = self.listbox.get(ANCHOR)
+        self.text.delete(1.0, END)
+
+        for i in functions_list:
+            if i[0] == self.selected:
+                continue
+            else:
+                pass
+
+        if self.selected == 'Characters':
+            for i in all_characters:
+                if item == i.name:
+                    self.text.insert(END, f'*({item})\n\n\n')
+
+                    info = i.all_info()
+                    for j in info:
+                        self.text.insert(END, f'{j}\n')
+
     #  ------------   in progress   -----------------
+
     def select(self):
-        selected = self.listbox.get(ANCHOR)
-        menu = None
+
+        self.selected = self.listbox.get(ANCHOR)
+        selected = self.selected
 
         self.listbox.delete(0, END)
+        self.text.delete(1.0, END)
+
+        hog_students = hogwarts_students
+        hog_staffs = hogwarts_staffs
+        hog_houses = hogwarts_houses
 
         if selected == '':
-            print('No item')
+            self.listbox.insert(END, 'No item')
 
         else:
-
-            for i in functions_list:
-                if selected == i[0]:
-                    menu = i[1]
-
-        if not self.hogwarts_details_got:
-            if menu == 2:
-                self.hogwarts_details_got = True
-
-        if self.hogwarts_details_got:
-            self.hogwarts_tuple = hogwarts_details()
+            self.but_execute.config(state=NORMAL)
 
         if selected == 'Characters':
             for i in all_characters:
                 self.listbox.insert(END, i.name)
+                self.text.insert(END, f"({i.code_id}): {i.name}\n\n")
         elif selected == "Specific Character":
             print('not yet')
         elif selected == 'Students':
-            for i in self.hogwarts_tuple[0]:
+            for i in hog_students:
                 self.listbox.insert(END, i['name'])
+                self.text.insert(END, f"{i['name']}: {i['id']}\n\n")
         elif selected == 'Staffs':
-            for i in self.hogwarts_tuple[1]:
+            for i in hog_staffs:
                 self.listbox.insert(END, i['name'])
+                self.text.insert(END, f"{i['name']}: {i['id']}\n\n")
         elif selected == 'Houses':
-            for i in self.hogwarts_tuple[2]:
-                self.listbox.insert(END, i['name'])
+            for i in hog_houses:
+                self.listbox.insert(END, i)
+                self.text.insert(END, f"{i}: {len(hog_houses[i])} students\n\n")
         elif selected == 'Spells':
             for i in all_spells:
                 self.listbox.insert(END, i['name'])
+                self.text.insert(END, f"{i['name']}: {i['description']}\n\n")
         else:
-            print('not yet')
+            print('else')
 
     #  --------------------------------------------------
 
@@ -235,7 +271,7 @@ class AppMain:
 
         characters = all_characters
         spells = all_spells
-        houses = hogwarts_houses
+        houses = houses_names
         species = all_species
         ancestries = all_ancestry_type
 

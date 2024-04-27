@@ -1,4 +1,4 @@
-from api_config.data_api import all_hogwarts_students, all_hogwarts_staffs, hogwarts_houses, hogwarts_houses_students
+from api_config.data_api import all_hogwarts_students, all_hogwarts_staffs, houses_names, hogwarts_houses_students
 
 
 class Hogwarts:

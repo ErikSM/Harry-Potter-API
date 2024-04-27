@@ -1,8 +1,11 @@
 id_sample = "57fe29d4-312a-4711-bd9a-c320253d9176"
 
 
-movies_colors = {"dark_pink": "#581447",
-                 "pink": "#995193",
+#581447
+#995193
+
+movies_colors = {"black": "black",
+                 "brown": "brown",
                  "green": "#254935",
                  "beige": "#645F53",
                  "grey": "#3A3E41",
@@ -18,16 +21,16 @@ all_request_list = ["all characters",
                     "spells"]
 
 
-functions_list = [("Characters", 1),
-                  ("Specific Character", 1),
-                  ("Students", 2),
-                  ("Staffs", 2),
-                  ("Houses", 2),
-                  ("Spells", 3),
-                  ("Species", 4),
-                  ("Date of Birth", 4),
-                  ("Ancestry", 4),
-                  ("Actors", 4)]
+functions_list = [("Characters", 1, 0),
+                  ("Specific Character", 1, 1),
+                  ("Students", 2, 2),
+                  ("Staffs", 2, 3),
+                  ("Houses", 2, 4),
+                  ("Spells", 3, 5),
+                  ("Species", 4, 6),
+                  ("Date of Birth", 4, 7),
+                  ("Ancestry", 4, 8),
+                  ("Actors", 4, 9)]
 
 
 characters_dict_keys = ["patronus",

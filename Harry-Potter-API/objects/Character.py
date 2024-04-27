@@ -26,6 +26,14 @@ class Character:
             self.__name = self.__data['name']
             self.__code_id = self.__data['id']
 
+    def all_info(self):
+        string = list()
+
+        for i in self.__data:
+            string.append(f"{i}: {self.__data[i]}")
+
+        return string
+
     @property
     def data(self):
         return self.__data
