@@ -11,6 +11,8 @@ class Character:
             self.__name = self.__data['name']
             self.__code_id = self.__data['id']
             self.__actor = self.__data['actor']
+            self.__birth = self.__data['dateOfBirth']
+            self.__alive = self.__data['alive']
 
         except Exception as ex:
             self.__data = dict()
@@ -27,16 +29,27 @@ class Character:
             self.__code_id = self.__data['id']
 
     def all_info(self):
-        string = list()
+        string_info = list()
 
         for i in self.__data:
-            string.append(f"{i}: {self.__data[i]}")
+            string_info.append(f"{i}: {self.__data[i]}")
 
-        return string
+        return string_info
 
-    @property
-    def data(self):
-        return self.__data
+    def specie_and_ancestry(self):
+
+        specie = None
+        ancestry = None
+
+        for i in self.__data:
+            if i == 'species':
+                specie = self.__data[i]
+            elif i == 'ancestry':
+                ancestry = self.__data[i]
+            else:
+                pass
+
+        return specie, ancestry
 
     @property
     def name(self):
@@ -50,3 +63,14 @@ class Character:
     def actor(self):
         return self.__actor
 
+    @property
+    def data(self):
+        return self.__data
+
+    @property
+    def birth(self):
+        return self.__birth
+
+    @property
+    def alive(self):
+        return self.__alive

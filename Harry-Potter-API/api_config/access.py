@@ -32,4 +32,3 @@ def make_request(complement, research=''):
         list_required = [{'Error': f"{ex}", 'search': f"{complement}", 'address': f"{address}"}]
 
     return list_required
-

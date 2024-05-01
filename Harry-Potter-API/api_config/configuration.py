@@ -1,8 +1,7 @@
 id_sample = "57fe29d4-312a-4711-bd9a-c320253d9176"
 
-
-#581447
-#995193
+# 581447
+# 995193
 
 movies_colors = {"black": "black",
                  "brown": "brown",
@@ -12,7 +11,6 @@ movies_colors = {"black": "black",
                  "yellow": "#786313",
                  "white": "white"}
 
-
 all_request_list = ["all characters",
                     "specific character",
                     "hogwarts students",
@@ -20,18 +18,16 @@ all_request_list = ["all characters",
                     "hogwarts houses",
                     "spells"]
 
-
-functions_list = [("Characters", 1, 0),
-                  ("Specific Character", 1, 1),
-                  ("Students", 2, 2),
-                  ("Staffs", 2, 3),
-                  ("Houses", 2, 4),
-                  ("Spells", 3, 5),
-                  ("Species", 4, 6),
-                  ("Date of Birth", 4, 7),
-                  ("Ancestry", 4, 8),
-                  ("Actors", 4, 9)]
-
+functions_list = [("Characters", 1),
+                  ("Ids", 1),
+                  ("Spells", 1),
+                  ("Students", 2),
+                  ("Staffs", 2),
+                  ("Houses", 2),
+                  ("Species", 3),
+                  ("Date of Birth", 3),
+                  ("Ancestry", 3),
+                  ("Actors", 3)]
 
 characters_dict_keys = ["patronus",
                         "yearOfBirth",
@@ -54,9 +50,7 @@ characters_dict_keys = ["patronus",
                         "id",
                         "eyeColour"]
 
-
 booleans_keys = ["hogwartsStaff",
                  "alive",
                  "wizard",
                  "hogwartsStudent"]
-
