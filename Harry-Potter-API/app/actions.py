@@ -29,7 +29,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
     a_specie = False
     a_ancestry = False
 
-    all_info_string = None
+    details_info = 'Not Founded'
 
     if not improve_research_enabled or improve == 'character':
         for i in characters:
@@ -39,7 +39,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 character_name = i.name
                 type_found = "character"
 
-                all_info_string = i.all_info()
+                details_info = i.all_info()
 
             if i.actor == word_captured:
                 founded = True
@@ -47,7 +47,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 actor_name = i.actor
                 type_found = "actor"
 
-                all_info_string = i.all_info()
+                details_info = i.all_info()
 
     if not improve_research_enabled or improve == 'house':
         for i in houses:
@@ -57,7 +57,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 house_name = i
                 type_found = "house"
 
-                all_info_string = [f"house: {i.title()}", f"{len(hogwarts_houses[i.title()])} students"]
+                details_info = [f"house: {i.title()}", f"{len(hogwarts_houses[i.title()])} students\n"]
 
     if not improve_research_enabled or improve == 'spell':
         for i in spells:
@@ -70,7 +70,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                         type_found = "spell"
 
                         info = i
-                        all_info_string = [f'{z}: {info[z]}' for z in info]
+                        details_info = [f'{z}: {info[z]}\n' for z in info]
 
     if not improve_research_enabled or improve == 'specie':
         for i in species:
@@ -80,7 +80,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 specie_name = i
                 type_found = 'specie'
 
-                all_info_string = [f"*Name: {i[0].title()}\nid:{i[1]}\n\n" for i in by_species[i]]
+                details_info = [f"*Name: {i[0].title()}\nid:{i[1]}\n\n" for i in by_species[i]]
 
     if not improve_research_enabled or improve == 'ancestry':
         for i in ancestries:
@@ -90,7 +90,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 ancestry_type = i
                 type_found = 'ancestry'
 
-                all_info_string = [f"*Name: {i[0].title()} \nid:{i[1]}\n\n" for i in by_ancestries[i]]
+                details_info = [f"*Name: {i[0].title()} \nid:{i[1]}\n\n" for i in by_ancestries[i]]
 
     if founded:
         was_sought = f"was sought:({word_captured})"
@@ -111,20 +111,19 @@ def processing_search(improve, improve_research_enabled, word_captured):
         ok_founded = f"OK founded: {to_print}*"
         type_searched = f"type:[[{type_found}]]"
 
-        return [was_sought, ok_founded, type_searched], all_info_string
+        result_info = [was_sought, ok_founded, type_searched]
+
+        return result_info, details_info
 
     else:
-        not_founded = to_print
+        result_info = [to_print]
 
-        return [not_founded], all_info_string
+        return result_info, details_info
 
 
 def processing_select(selected):
-    hog_students = hogwarts_students
-    hog_staffs = hogwarts_staffs
-    hog_houses = hogwarts_houses
 
-    text_title = f'*({selected})\n\n\n'
+    text_title = f"*{selected}:\n\n\n"
     list_string = list()
     text_string = list()
 
@@ -139,31 +138,33 @@ def processing_select(selected):
     elif selected == 'Spells':
         for i in all_spells:
             list_string.append(i['name'])
-            text_string.append(f"- {i['name']}: {i['description']}\n\n\n")
+            text_string.append(f"- {i['name']}  {i['description']}\n\n\n")
     elif selected == 'Students':
-        for i in hog_students:
+        for i in hogwarts_students:
             list_string.append(i['name'])
-            text_string.append(f"{i['id']}:\n {i['name']}\n\n")
+            text_string.append(f"{i['id']}\n {i['name']}\n\n")
     elif selected == 'Staffs':
-        for i in hog_staffs:
+        for i in hogwarts_staffs:
             list_string.append(i['name'])
-            text_string.append(f"{i['id']}:\n {i['name']}\n\n")
+            text_string.append(f"{i['id']}\n {i['name']}\n\n")
     elif selected == 'Houses':
-        for i in hog_houses:
+        for i in hogwarts_houses:
             list_string.append(i)
-            text_string.append(f"{i}: {len(hog_houses[i])} students\n\n")
+            text_string.append(f"{i} {len(hogwarts_houses[i])} students")
+            text_string.append(f'\n')
+            text_string.append(f'\n')
     elif selected == 'Species':
         for i in by_species:
             list_string.append(i)
-            text_string.append(f"{i}: {len(by_species[i])} characters\n\n")
+            text_string.append(f"{i} {len(by_species[i])} characters\n\n")
     elif selected == "Date of Birth":
         for i in all_characters:
             list_string.append(i.name)
-            text_string.append(f"{i.name}: {i.birth}\n\n")
+            text_string.append(f"{i.name} {i.birth}\n\n")
     elif selected == 'Ancestry':
         for i in by_ancestries:
             list_string.append(i)
-            text_string.append(f"{i}: {len(by_ancestries[i])} characters\n\n")
+            text_string.append(f"{i} {len(by_ancestries[i])} characters\n\n")
     elif selected == 'Actors':
         for i in all_characters:
             if i.actor != '':
@@ -261,6 +262,7 @@ def processing_item(selected, item):
     if selected == 'Date of Birth':
         for i in all_characters:
             if item == i.name:
+
                 if i.alive:
                     status = 'alive'
                 else:
@@ -268,12 +270,26 @@ def processing_item(selected, item):
                 text_list.append(f'{i.name}: {i.birth}\n({status})\n')
 
     if selected == 'Ancestry':
-        text_list = ['not yet']
+        for i in by_ancestries:
+            if item == i:
+
+                info = by_ancestries[i]
+                for j in info:
+                    text_list.append(f'name: {j[0]}\nid: {j[1]}\n\n')
+
+    if selected == 'Species':
+        for i in by_species:
+            if item == i:
+
+                info = by_species[i]
+                for j in info:
+                    text_list.append(f'name: {j[0]}\nid: {j[1]}\n\n')
 
     if selected == 'Actors':
         for i in all_characters:
             if item == i.actor:
+
                 if i.actor != '':
-                    text_list.append(f'Character: {i.name}')
+                    text_list.append(f'- Character: {i.name}\nActor: {i.actor}\nId: {i.code_id}\n\n')
 
     return title, text_list

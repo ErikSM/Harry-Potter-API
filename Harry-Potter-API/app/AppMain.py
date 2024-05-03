@@ -1,7 +1,6 @@
 from tkinter import *
 
-from api_config.configuration import movies_colors, functions_list
-from api_config.data_api import all_spells, all_characters, hogwarts_students, hogwarts_staffs, hogwarts_houses
+from api_config.configuration import movies_colors
 from app.actions import processing_search, processing_select, processing_play, processing_item
 
 
@@ -9,7 +8,12 @@ class AppMain:
 
     def __init__(self):
 
-        self.selected = None
+        self.play_captured = None
+        self.option_selected = None
+        self.item_caught = None
+
+        start_local = "..//"
+        self.current_local = start_local
         standard_size = 2
 
         self.window = Tk()
@@ -26,9 +30,11 @@ class AppMain:
         frame_entry = Frame(self.frame_top)
         color_entry = movies_colors['grey']
 
-        self.entry = Entry(frame_entry, width=(standard_size * 61), disabledbackground=color_entry)
-        self.entry.config(bg=color_entry, bd=4, state=DISABLED)
-        self.entry.pack()
+        self.string_local = StringVar(self.window)
+        self.string_local.set(start_local)
+        self.entry_local = Entry(frame_entry, width=(standard_size * 61), disabledbackground=color_entry)
+        self.entry_local.config(bg=color_entry, bd=4, state=DISABLED, textvariable=self.string_local)
+        self.entry_local.pack()
 
         frame_entry.pack()
 
@@ -172,22 +178,26 @@ class AppMain:
             self.listbox.yview(index - 15)
             self.listbox.select_anchor(index)
 
-        except Exception as ex:
+        except IndexError:
             self.listbox.select_set(END)
-            print(f"No previous\n\nError{ex}")
 
     def to_play(self):
         self.but_select.config(state=NORMAL)
         self.but_execute.config(state=DISABLED)
 
-        captured = self.spinbox.get()
+        self.play_captured = self.spinbox.get()
+        captured = self.play_captured
+
+        current_local = self.play_captured
+        self._update_local(current_local)
+
         processed = processing_play(captured)
+        options_list = processed
 
         self.text.delete(1.0, END)
-        self.listbox.delete(0, END)
 
-        for i in processed:
-            self.listbox.insert(END, i)
+        self.listbox.delete(0, END)
+        self.listbox.insert(END, *options_list)
 
         self.listbox.select_set(0)
         index = self.listbox.curselection()[0]
@@ -198,11 +208,11 @@ class AppMain:
 
     def do_select(self):
 
-        self.selected = self.listbox.get(ANCHOR)
-        selected = self.selected
+        self.option_selected = self.listbox.get(ANCHOR)
+        selected = self.option_selected
 
-        self.listbox.delete(0, END)
-        self.text.delete(1.0, END)
+        current_local = self.play_captured, self.option_selected
+        self._update_local(*current_local)
 
         if selected == '':
             self.listbox.insert(END, 'No item')
@@ -212,12 +222,14 @@ class AppMain:
             self.but_select.config(state=DISABLED)
 
             processed = processing_select(selected)
+            list_string, text_title, text_string = processed[0], processed[1], processed[2]
 
-            for i in processed[0]:
-                self.listbox.insert(END, i)
+            self.listbox.delete(0, END)
+            self.listbox.insert(END, *list_string)
 
-            self.text.insert(1.0, processed[1])
-            for i in processed[2]:
+            self.text.delete(1.0, END)
+            self.text.insert(1.0, text_title)
+            for i in text_string:
                 self.text.insert(END, i)
 
             try:
@@ -229,23 +241,35 @@ class AppMain:
 
     def show_item(self):
 
-        selected_before = self.selected
-        item_to_show = self.listbox.get(ANCHOR)
+        selected_before = self.option_selected
+        self.item_caught = self.listbox.get(ANCHOR)
+        item_caught = self.item_caught
+
+        current_local = self.play_captured, self.option_selected, self.item_caught
+        self._update_local(*current_local)
+
+        processed = processing_item(selected_before, item_caught)
+        title, text_list = processed[0], processed[1]
 
         self.text.delete(1.0, END)
 
-        processed = processing_item(selected_before, item_to_show)
-
-        self.text.insert(1.0, processed[0])
-        for i in processed[1]:
-            self.text.insert(END,  f'{i}')
+        self.text.insert(1.0, title)
+        for i in text_list:
+            self.text.insert(END, i)
 
     def do_search(self):
+
         self.but_execute.config(state=DISABLED)
         self.but_select.config(state=DISABLED)
 
         word_captured = self.entry_search.get()
         improve = self.string_menu.get()
+
+        current_local = f'search_for:[{word_captured}]'
+        self._update_local(current_local)
+
+        list_title = '  Search Result  ', ''
+        details_title = 'Result Details\n\n\n'
 
         improve_research_enabled = None
         if improve in self.search_list:
@@ -254,20 +278,31 @@ class AppMain:
             improve_research_enabled = False
 
         processed = processing_search(improve, improve_research_enabled, word_captured)
+        result_info, details_info = processed[0], processed[1]
 
         self.listbox.delete(0, END)
 
-        self.listbox.insert(1, '  Search Result  ', '')
-        for i in processed[0]:
-            self.listbox.insert(END, i)
+        self.listbox.insert(1, *list_title)
+        self.listbox.insert(END, *result_info)
 
         self.text.delete(1.0, END)
 
-        self.text.insert(1.0, 'Details\n\n\n')
-        for i in processed[1]:
-            self.text.insert(END, f'{i}\n')
+        self.text.insert(END, details_title)
+        for i in details_info:
+            self.text.insert(END, i)
 
         self.string_menu.set("Improve search")
 
+    def _update_local(self, *args):
+        string = '>'
+
+        for i in args:
+            string += f"{i}>"
+
+        local = f'{self.current_local}{string}'
+
+        self.string_local.set(local)
+
 
 AppMain()
+

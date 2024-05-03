@@ -25,8 +25,8 @@ functions_list = [("Characters", 1),
                   ("Staffs", 2),
                   ("Houses", 2),
                   ("Species", 3),
-                  ("Date of Birth", 3),
                   ("Ancestry", 3),
+                  ("Date of Birth", 3),
                   ("Actors", 3)]
 
 characters_dict_keys = ["patronus",
