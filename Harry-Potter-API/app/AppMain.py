@@ -1,6 +1,6 @@
 from tkinter import *
 
-from api_config.configuration import movies_colors
+from api_config.configuration import movies_colors, welcome_string, menu_play_end_number
 from app.actions import processing_search, processing_select, processing_play, processing_item
 
 
@@ -12,7 +12,7 @@ class AppMain:
         self.option_selected = None
         self.item_caught = None
 
-        start_local = "..//"
+        start_local = "../"
         self.current_local = start_local
         standard_size = 2
 
@@ -61,16 +61,17 @@ class AppMain:
         Button(frame_search, text='search',
                command=self.do_search, width=7, bg=color_search[0]).pack(side=LEFT)
         Label(frame_search, text='API - HP',
-              font=('Arial', 10, 'bold'), width=(standard_size * 3), background=color_search[2]).pack(side=BOTTOM)
+              font=('Arial', 10, 'bold', 'underline'), width=(standard_size * 3), background=color_search[2]).pack(
+            side=BOTTOM)
 
         frame_search.pack(fill=Y)
 
         frame_spinbox = Frame(self.frame_left, bg=color_sub_frames[2], bd=7)
         color_spinbox = [movies_colors['grey'], movies_colors['white'], movies_colors['black']]
 
-        self.menu_play_list = ['Characters', 'Hogwarts', 'Curiosities']
+        spinbox_list = [i[0] for i in menu_play_end_number]
 
-        self.spinbox = Spinbox(frame_spinbox, values=self.menu_play_list)
+        self.spinbox = Spinbox(frame_spinbox, values=spinbox_list)
         self.spinbox.config(width=(standard_size * 20), bg=color_spinbox[0], bd=8)
         self.spinbox.config(highlightbackground=color_spinbox[1])
         self.spinbox.pack(side=LEFT)
@@ -119,6 +120,7 @@ class AppMain:
         self.str_select.set('     select     ')
         self.str_exe = StringVar(self.window)
         self.str_exe.set('show more')
+
         cont = 0
         while cont < 14:
             if cont == 1:
@@ -127,7 +129,8 @@ class AppMain:
                 self.but_select.grid(row=cont, column=0)
                 cont += 1
             elif cont == 2:
-                self.but_execute = Button(frame_but, textvariable=self.str_exe, command=self.show_item, state=DISABLED)
+                self.but_execute = Button(frame_but, textvariable=self.str_exe, command=self.show_item,
+                                          state=DISABLED)
                 self.but_execute.grid(row=cont, column=0)
                 cont += 1
             else:
@@ -144,6 +147,7 @@ class AppMain:
         color_text = [movies_colors['grey'], movies_colors['white'], movies_colors['black']]
 
         self.text = Text(frame_text, width=(standard_size * 25), height=32, bd=20, bg=color_text[2], fg=color_text[1])
+        self.text.insert(1.0, welcome_string)
         y_scroll_txt = Scrollbar(frame_text, orient=VERTICAL, command=self.text.yview)
         y_scroll_txt.grid(row=1, column=1, sticky=N + S)
         self.text.config(yscrollcommand=y_scroll_txt.set)
@@ -195,8 +199,8 @@ class AppMain:
         options_list = processed
 
         self.text.delete(1.0, END)
-
         self.listbox.delete(0, END)
+
         self.listbox.insert(END, *options_list)
 
         self.listbox.select_set(0)
@@ -294,10 +298,10 @@ class AppMain:
         self.string_menu.set("Improve search")
 
     def _update_local(self, *args):
-        string = '>'
+        string = '/>'
 
         for i in args:
-            string += f"{i}>"
+            string += f"{i}/>"
 
         local = f'{self.current_local}{string}'
 
@@ -305,4 +309,3 @@ class AppMain:
 
 
 AppMain()
-

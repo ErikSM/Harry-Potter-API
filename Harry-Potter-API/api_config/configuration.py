@@ -1,7 +1,7 @@
-id_sample = "57fe29d4-312a-4711-bd9a-c320253d9176"
 
-# 581447
-# 995193
+
+welcome_string = ("*   Project created by Beth and maintained\nby Kostas. "
+                  "\n\nVisit the GitHub repo to see the code.")
 
 movies_colors = {"black": "black",
                  "brown": "brown",
@@ -17,6 +17,10 @@ all_request_list = ["all characters",
                     "hogwarts staff",
                     "hogwarts houses",
                     "spells"]
+
+menu_play_end_number = [('Characters', 1),
+                  ('Hogwarts', 2),
+                  ('Curiosities', 3)]
 
 functions_list = [("Characters", 1),
                   ("Ids", 1),
