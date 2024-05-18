@@ -1,32 +1,38 @@
-from api_config.configuration import functions_list, menu_play_end_number
+from api_config.configuration import play_options_and_code, menu_play_and_code
 from api_config.data_api import all_characters, houses_names, all_spells, ancestry_names, hogwarts_houses, by_species, \
     by_ancestries, species_names, hogwarts_students, hogwarts_staffs
 
 
-def processing_play(captured):
+def processing_play(menu_play_captured):
+
     options_chosen = list()
 
-    for i in functions_list:
-        option_to_got = i[0]
-        option_number = i[1]
+    try:
+        captured_option_code = menu_play_and_code[menu_play_captured]
 
-        if captured == 'Characters':
-            if option_number == 1:
-                options_chosen.append(option_to_got)
-        elif captured == 'Hogwarts':
-            if option_number == 2:
-                options_chosen.append(option_to_got)
-        elif captured == 'Curiosities':
-            if option_number == 3:
-                options_chosen.append(option_to_got)
-        else:
-            options_chosen = list()
-            options_chosen.append('Error X?!xX8xX - not valid')
+    except KeyError as ex:
+        error = f"xX!x ErRor ?XxX"
+        ex = f"[{ex}] not valid"
 
-    return options_chosen
+        options_chosen.append(error)
+        options_chosen.append(ex)
+
+    else:
+        for i in play_options_and_code:
+            option_got = i[0]
+            option_code = i[1]
+
+            if option_code == captured_option_code:
+                options_chosen.append(option_got)
+            else:
+                pass
+
+    finally:
+        return options_chosen
 
 
 def processing_select(selected):
+
     text_title = f"*{selected}:\n\n\n"
     list_string = list()
     text_string = list()
@@ -46,11 +52,11 @@ def processing_select(selected):
     elif selected == 'Students':
         for i in hogwarts_students:
             list_string.append(i['name'])
-            text_string.append(f"{i['id']}:\n {i['name']}\n\n")
+            text_string.append(f"{i['id']} :\n {i['name']}\n\n")
     elif selected == 'Staffs':
         for i in hogwarts_staffs:
             list_string.append(i['name'])
-            text_string.append(f"{i['id']}:\n {i['name']}\n\n")
+            text_string.append(f"{i['id']} :\n {i['name']}\n\n")
     elif selected == 'Houses':
         for i in hogwarts_houses:
             list_string.append(i)
@@ -82,7 +88,8 @@ def processing_select(selected):
 
 
 def processing_item(selected, item):
-    for i in functions_list:
+
+    for i in play_options_and_code:
         if i[0] == selected:
             continue
         else:
@@ -113,7 +120,7 @@ def processing_item(selected, item):
 
                 info = i
                 for j in info:
-                    text_list.append(f'- {j}: \n{info[j]}\n\n')
+                    text_list.append(f'- {j} : \n{info[j]}\n\n')
 
     if selected == 'Students':
         for i in hogwarts_students:
@@ -121,7 +128,7 @@ def processing_item(selected, item):
 
                 info = i
                 for j in info:
-                    text_list.append(f'{j}:  {info[j]}\n')
+                    text_list.append(f'{j} :  {info[j]}\n')
 
     if selected == 'Staffs':
         for i in hogwarts_staffs:
@@ -129,7 +136,7 @@ def processing_item(selected, item):
 
                 info = i
                 for j in info:
-                    text_list.append(f'{j}:  {info[j]}\n')
+                    text_list.append(f'{j} :  {info[j]}\n')
 
     if selected == 'Houses':
         for i in hogwarts_houses:
@@ -137,7 +144,7 @@ def processing_item(selected, item):
 
                 info = hogwarts_houses[i]
                 for j in info:
-                    text_list.append(f' ({j["id"]}):  \n- {j["name"]}\n\n')
+                    text_list.append(f' {j["id"]} :  \n- {j["name"]}\n\n')
 
     if selected == 'Date of Birth':
         for i in all_characters:
@@ -188,6 +195,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
     spell_name = ''
     specie_name = ''
     ancestry_type = ''
+    id_number = ''
 
     type_found = "Not found"
     to_print = "Not found"
@@ -202,6 +210,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
     a_spell = False
     a_specie = False
     a_ancestry = False
+    a_id = False
 
     if not improve_research_enabled or improve == 'character':
         for i in characters:
@@ -229,7 +238,7 @@ def processing_search(improve, improve_research_enabled, word_captured):
                 house_name = i
                 type_found = "house"
 
-                details_info = [f"House:({i.title()})\n", f" -{len(hogwarts_houses[i.title()])} students"]
+                details_info = [f"House:{i.title()}\n", f" -{len(hogwarts_houses[i.title()])} students"]
 
     if not improve_research_enabled or improve == 'spell':
         for i in spells:
@@ -264,6 +273,16 @@ def processing_search(improve, improve_research_enabled, word_captured):
 
                 details_info = [f"*Name: {i[0].title()} \nid:{i[1]}" for i in by_ancestries[i]]
 
+    if not improve_research_enabled or improve == 'id':
+        for i in all_characters:
+            if i.code_id == word_captured:
+                founded = True
+                a_id = True
+                id_number = i.code_id
+                type_found = 'Id'
+
+                details_info = i.all_info()
+
     if founded:
         if a_character:
             to_print = character_name
@@ -277,6 +296,8 @@ def processing_search(improve, improve_research_enabled, word_captured):
             to_print = specie_name
         elif a_ancestry:
             to_print = ancestry_type
+        elif a_id:
+            to_print = id_number
 
         was_sought = f"was sought:({word_captured})"
 
@@ -288,5 +309,5 @@ def processing_search(improve, improve_research_enabled, word_captured):
 
     else:
         result_info = ['not found']
+        details_info = [details_info, "\n[ xxx ]"]
         return result_info, details_info
-
